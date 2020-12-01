@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -18,22 +19,22 @@ namespace Terraform
             var outputs = new List<string>();
 
             // Replace "hello" with the name of your Durable Activity Function.
-            outputs.Add(await context.CallActivityAsync<string>("Orchestrator_Hello", "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>("Orchestrator_Hello", "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>("Orchestrator_Hello", "London"));
+            outputs.Add(await context.CallActivityAsync<string>("Terraform", "Tokyo"));
+            outputs.Add(await context.CallActivityAsync<string>("Terraform", "Seattle"));
+            outputs.Add(await context.CallActivityAsync<string>("Terraform", "London"));
 
             // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
             return outputs;
         }
 
-        [FunctionName("Orchestrator_Hello")]
-        public static string SayHello([ActivityTrigger] string name, ILogger log)
+        [FunctionName("Terraform")]
+        public static string Terraform([ActivityTrigger] string name, ILogger log)
         {
-            log.LogInformation($"Saying hello to {name}.");
-            return $"Hello {name}!";
+            log.LogInformation($"Starting Terraform Activity with argument {name}.");
+            return "";
         }
 
-        [FunctionName("Orchestrator_HttpStart")]
+        [FunctionName("Handler")]
         public static async Task<HttpResponseMessage> HttpStart(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestMessage req,
             [DurableClient] IDurableOrchestrationClient starter,
