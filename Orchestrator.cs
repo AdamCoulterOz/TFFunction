@@ -7,6 +7,8 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using CliWrap;
+using CliWrap.Buffered;
 
 namespace Terraform
 {
@@ -17,21 +19,20 @@ namespace Terraform
             [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             var outputs = new List<string>();
-
-            // Replace "hello" with the name of your Durable Activity Function.
-            outputs.Add(await context.CallActivityAsync<string>("Terraform", "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>("Terraform", "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>("Terraform", "London"));
-
-            // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
+            outputs.Add(await context.CallActivityAsync<string>("Terraform", "Run the terrform..."));
             return outputs;
         }
 
         [FunctionName("Terraform")]
-        public static string Terraform([ActivityTrigger] string name, ILogger log)
+        public static async Task<string> Terraform([ActivityTrigger] string name, ILogger log)
         {
             log.LogInformation($"Starting Terraform Activity with argument {name}.");
-            return "";
+            var task = await Cli.Wrap("terraform")
+                .WithWorkingDirectory("/Users/adam/Code/GitHub/AdamCoulterOz/TFFunction/terraform/")
+                .WithArguments("init")
+                .ExecuteBufferedAsync();
+
+            return task.StandardOutput;
         }
 
         [FunctionName("Handler")]
