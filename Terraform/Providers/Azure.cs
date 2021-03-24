@@ -1,6 +1,4 @@
-using System;
-
-namespace Terraform.Providers
+namespace TF.Providers
 {
 	public class Azure : Provider
 	{
@@ -12,7 +10,7 @@ namespace Terraform.Providers
 		public string SubscriptionId { get; set; }
 		[Name("ARM_TENANT_ID")]
 		public string TenantId { get; set; }
-		[Name("ARM_USE_MSI")]
+		[Name("ARM_USE_MSI", Lower = true)]
 		public bool UseMsi { get; set; }
 		public Azure()
 		{

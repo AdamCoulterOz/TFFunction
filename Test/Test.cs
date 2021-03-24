@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
-using Terraform.Providers;
+using TF.Providers;
 using Xunit;
 
-namespace Terraform.Test
+namespace TF.Test
 {
 	public class UnitTests
 	{
